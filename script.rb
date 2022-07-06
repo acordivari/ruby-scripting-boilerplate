@@ -11,21 +11,20 @@ if ARGV.length != 1
 end
 
 file = File.expand_path(File.dirname(__FILE__)) + "/inputs/#{ARGV[0]}"
+#SET YOUR REQUEST URL BELOW
 url = URI("")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
-#feel free to utilize any HTTP library (faraday, HTTParty etc)
-
+#SET DESIRED HTTP REQUEST
 request = Net::HTTP::Get.new(url)
-
+#CONFIGURE AUTH AND ADD ANY HEADERS
 request["ApiKey"] = ENV['API_KEY']
 request["Content-Type"] = 'application/json'
 
 @success_results = []
 @failure_results = []
 
-#build the request body, hyptothetical example below
-#mix and match attributes that are pulled from CSV or hard coded
+#GENERATE THE REQUEST BODY
 CSV.foreach(file, headers: true) do |row|
   request.body = JSON.dump({
       "full_street_address": {
@@ -41,7 +40,7 @@ CSV.foreach(file, headers: true) do |row|
 unformatted_response = https.request(request)
 response = JSON.parse(unformatted_response.body)
 
-#you should have a JSON object now. Set a breakpoint (binding.pry) to figure out the best way to parse it
+#You should have a useable JSON object. Set a breakpoint (binding.pry) to inspect
 binding.pry
 #set conditions below for whatever you're looking for in the response (ie a 'true' value)
   unless response.nil?
